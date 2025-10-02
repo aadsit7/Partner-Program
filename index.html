@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -9,19 +9,17 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Fonts: Inter for UI, Poppins for display (approachable, modern) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root{
-      /* Recast brand tokens (approx. to logo & brochure) */
-      --rc-bg:        #0b1220;  /* Deep navy canvas */
-      --rc-text:      #e5e7eb;  /* Slate-200 */
-      --rc-muted:     #9aa4b2;  /* Slate-400/300 blend */
-      --rc-primary:   #2F77F1;  /* Recast Blue */
+      --rc-bg:        #0b1220;
+      --rc-text:      #e5e7eb;
+      --rc-muted:     #9aa4b2;
+      --rc-primary:   #2F77F1;
       --rc-primary-600:#2569d6;
-      --rc-secondary: #7C3AED;  /* Purple */
-      --rc-accent:    #F5C84C;  /* Yellow (balanced for dark UI) */
+      --rc-secondary: #7C3AED;
+      --rc-accent:    #F5C84C;
       --rc-surface:   rgba(255,255,255,0.06);
       --rc-border:    rgba(255,255,255,0.12);
     }
@@ -33,7 +31,6 @@
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     .font-display{ font-family:'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
-    /* Tailwind arbitrary color helpers via CSS vars */
     .bg-primary    { background-color: var(--rc-primary) !important; }
     .bg-secondary  { background-color: var(--rc-secondary) !important; }
     .bg-accent     { background-color: var(--rc-accent) !important; }
@@ -44,9 +41,7 @@
   </style>
 </head>
 <body class="min-h-screen">
-  <!-- Header -->
   <header class="relative overflow-hidden">
-    <!-- Brand gradient (Blue → Purple with a Yellow kiss) -->
     <div aria-hidden class="pointer-events-none absolute inset-0 blur-3xl"
          style="background:
            radial-gradient(60% 60% at 20% 10%, color-mix(in oklab, var(--rc-primary) 35%, transparent) 0%, transparent 70%),
@@ -57,7 +52,7 @@
     <div class="relative mx-auto max-w-7xl px-4 pt-10 pb-8">
       <div class="inline-flex items-center gap-2 rounded-full border border-brand surface px-3 py-1 text-xs backdrop-blur">
         <span class="inline-block h-1.5 w-1.5 rounded-full bg-accent"></span>
-             </div>
+      </div>
 
       <h1 class="mt-4 text-3xl font-display font-semibold tracking-tight sm:text-4xl">
         Join <span class="text-transparent bg-clip-text"
@@ -77,10 +72,9 @@
   <script type="text/babel">
     const { useMemo, useState } = React;
 
-    // --- Data model (unchanged) ---
     const MODEL = {
       tiers: {
-        Registered: {
+        "Recast Consultant Partner": {
           requirements: ["Signed agreement","Vetted & approved"],
           benefits: [
             "Margin/referral on registered closed deals",
@@ -89,7 +83,7 @@
             "Program logo package + exposure on Recastsoftware.com",
           ],
         },
-        Preferred: {
+        "Recast Value Partner": {
           requirements: [
             "Signed agreement","Vetted & approved","Recast page on partner site",
             "Active pipeline","1 certified technical","1 certified sales",
@@ -102,7 +96,7 @@
             "Dedicated MDF funds",
           ],
         },
-        Premier: {
+        "Recast Strategic Partner": {
           requirements: [
             "Signed agreement","Vetted & approved","Recast page on partner site","Active pipeline",
             "2 certified technical","2 certified sales","Sales targets","Business plan",
@@ -120,38 +114,38 @@
       margins: {
         Annual: {
           "Net New": {
-            "Preferred|Premier": [
+            "Recast Value Partner|Recast Strategic Partner": [
               { band: "Band 1", upTo: "30%", when: "Partner originated AND Partner registered AND Recast approved" },
               { band: "Band 2", upTo: "15%", when: "Recast originated/registered AND Recast approved" },
             ],
-            Registered: [
+            "Recast Consultant Partner": [
               { band: "Band 3", upTo: "5%", when: "Partner originated AND Partner registered AND Recast approved" },
             ],
           },
           Renewal: {
-            "Preferred|Premier": [
+            "Recast Value Partner|Recast Strategic Partner": [
               { band: "Band 1", upTo: "5%", when: "Partner of Record OR Incumbent" },
               { band: "Band 2", upTo: "5%", when: "Non-incumbent" },
             ],
-            Registered: [{ band: "Band 3", upTo: "0%", when: "NA" }],
+            "Recast Consultant Partner": [{ band: "Band 3", upTo: "0%", when: "NA" }],
           },
         },
         Monthly: {
           "Net New": {
-            "Preferred|Premier": [
+            "Recast Value Partner|Recast Strategic Partner": [
               { band: "Band 1", upTo: "20%", when: "Partner originated AND Partner registered AND Recast approved" },
               { band: "Band 2", upTo: "10%", when: "Recast originated/registered AND Recast approved" },
             ],
-            Registered: [
+            "Recast Consultant Partner": [
               { band: "Band 3", upTo: "5%", when: "Partner originated AND Partner registered AND Recast approved" },
             ],
           },
           Renewal: {
-            "Preferred|Premier": [
+            "Recast Value Partner|Recast Strategic Partner": [
               { band: "Band 1", upTo: "5%", when: "Partner of Record OR Incumbent" },
               { band: "Band 2", upTo: "5%", when: "Non-incumbent" },
             ],
-            Registered: [{ band: "Band 3", upTo: "0%", when: "NA" }],
+            "Recast Consultant Partner": [{ band: "Band 3", upTo: "0%", when: "NA" }],
           },
         },
       },
@@ -181,7 +175,7 @@
       },
     };
 
-    const TIERS = ["Registered", "Preferred", "Premier"];
+    const TIERS = ["Recast Consultant Partner", "Recast Value Partner", "Recast Strategic Partner"];
     const cx = (...a) => a.filter(Boolean).join(" ");
 
     const Badge = ({ children }) => (
@@ -253,12 +247,14 @@
 
       const rules = useMemo(() => {
         const universe = MODEL.margins[commitment][dealType];
-        const key = tier === "Preferred" || tier === "Premier" ? "Preferred|Premier" : "Registered";
+        const key = tier === "Recast Value Partner" || tier === "Recast Strategic Partner"
+          ? "Recast Value Partner|Recast Strategic Partner"
+          : "Recast Consultant Partner";
         return universe[key];
       }, [commitment, dealType, tier]);
 
       const fullMarginValue = useMemo(() => {
-        if (tier === "Preferred" || tier === "Premier") {
+        if (tier === "Recast Value Partner" || tier === "Recast Strategic Partner") {
           return commitment === "Annual" ? "30%" : "20%";
         }
         return commitment === "Annual" ? "5%" : "5%";
@@ -269,10 +265,10 @@
           title="Margins"
           right={
             <div className="flex flex-wrap items-center gap-3">
-              <label className={cx("flex items-center gap-2 text-sm", tier === 'Registered' && 'opacity-60')}
+              <label className={cx("flex items-center gap-2 text-sm", tier === 'Recast Consultant Partner' && 'opacity-60')}
                      title="For your first 3 net-new deals, we co-sell end-to-end and you keep full margin.">
                 <input type="checkbox" className="h-4 w-4 accent-[color:var(--rc-primary)]"
-                       disabled={tier === 'Registered'} checked={newPartner}
+                       disabled={tier === 'Recast Consultant Partner'} checked={newPartner}
                        onChange={(e) => setNewPartner(e.target.checked)} />
                 <span>New partner boost (first 3 net-new deals)</span>
               </label>
@@ -293,7 +289,7 @@
                 <div className="font-semibold">New Partner Boost — Full Margin</div>
                 <Badge>Up to {fullMarginValue}</Badge>
               </div>
-              <p className="mt-2 text-sm text-muted">For your first <strong>three</strong> net-new opportunities, Recast will <strong>shadow and co-run the deal end-to-end</strong> (discovery → demo → proposal → close) while you retain <strong>full Band 1 margin</strong>. {tier === 'Registered' ? 'Upgrade to Preferred to unlock this boost.' : ''}</p>
+              <p className="mt-2 text-sm text-muted">For your first <strong>three</strong> net-new opportunities, Recast will <strong>shadow and co-run the deal end-to-end</strong> (discovery → demo → proposal → close) while you retain <strong>full Band 1 margin</strong>. {tier === 'Recast Consultant Partner' ? 'Upgrade to Recast Value Partner to unlock this boost.' : ''}</p>
             </div>
           ) : (
             <>
@@ -319,7 +315,7 @@
       const [active, setActive] = useState(0);
       return (
         <Card
-          title="Onboarding (Preferred & Premier)"
+          title="Onboarding (Recast Value Partner & Recast Strategic Partner)"
           right={
             <div className="flex gap-2">
               {MODEL.onboarding.steps.map((s, i) => (
@@ -350,21 +346,20 @@
     }
 
     function App() {
-      const [tier, setTier] = useState("Preferred");
+      const [tier, setTier] = useState("Recast Value Partner");
       const [tab, setTab] = useState("takes");
 
       return (
         <div className="space-y-6">
-          {/* Tier Tiles */}
           <section className="grid gap-3 sm:grid-cols-3">
-            {["Registered","Preferred","Premier"].map((t) => (
+            {["Recast Consultant Partner","Recast Value Partner","Recast Strategic Partner"].map((t) => (
               <Tile
                 key={t}
                 title={t}
                 subtitle={
-                  t === "Registered"
+                  t === "Recast Consultant Partner"
                     ? "Access & referral economics"
-                    : t === "Preferred"
+                    : t === "Recast Value Partner"
                     ? "Pipeline tools, CRM access, joint motions"
                     : "Campaigns + priority support"
                 }
@@ -374,7 +369,6 @@
             ))}
           </section>
 
-          {/* Pill Tabs */}
           <nav role="tablist" aria-label="Sections" className="flex flex-wrap gap-2 rounded-full surface p-1 ring-1 border-brand">
             <button role="tab" aria-selected={tab==='takes'} className={cx("rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 ring-primary",
               tab==='takes' ? 'bg-accent text-[color:var(--rc-bg)]' : 'hover:bg-white/10')} onClick={() => setTab('takes')}>What it takes</button>
@@ -386,7 +380,6 @@
               tab==='onboarding' ? 'bg-accent text-[color:var(--rc-bg)]' : 'hover:bg-white/10')} onClick={() => setTab('onboarding')}>Onboarding</button>
           </nav>
 
-          {/* Panels */}
           <div className="grid gap-4" aria-live="polite">
             {tab === "takes" && <WhatItTakes tier={tier} />}
             {tab === "gets" && <WhatYouGet tier={tier} />}
