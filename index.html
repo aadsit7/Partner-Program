@@ -42,6 +42,7 @@
         dealType: 'Net New',
         newPartner: false,
         activeStep: 0,
+        showROE: false,
         model: {
           tiers: {
             Registered: {
@@ -138,6 +139,33 @@
                 "Nominate for partner awards",
                 "Drive expansions & renewals",
               ]},
+            ],
+          },
+          roe: {
+            principles: [
+              { principle: "Deal Registration is Mandatory", description: "All partner-led opportunities must be registered and approved in the Recast Partner Portal to qualify for margin.", intent: "Protect partner investment in identifying and developing opportunities." },
+              { principle: "Partner of Record Protection", description: "Once approved, the partner remains the Partner of Record (PoR) for the customer lifecycle, including renewals and expansions.", intent: "Reinforce long-term partner loyalty and recurring revenue visibility." },
+              { principle: "Conflict Resolution", description: "In cases of overlapping claims, Recast Channel Leadership will evaluate based on deal registration timestamp, documented activity, and customer attestation.", intent: "Maintain fairness and avoid channel conflict." },
+              { principle: "Sales Collaboration", description: "Partners must collaborate with Recast Sales for pricing and technical validation before final proposal submission.", intent: "Ensure consistency of messaging and technical accuracy." },
+              { principle: "Ethical Conduct", description: "All partners must adhere to Recast’s Code of Conduct and anti-bribery/anti-poaching policies.", intent: "Protect the integrity of the channel ecosystem." },
+              { principle: "Renewal Ownership", description: "Partner of Record retains renewal rights unless customer explicitly reassigns.", intent: "Encourage customer retention and lifecycle focus." },
+            ],
+            bands: [
+              { band: "Band 1 – Full-Cycle Ownership", criteria: ["Partner sources and registers the lead.","Drives opportunity end-to-end (qualification → demo → close).","Requires minimal Recast sales or technical support.","Must be Preferred or Premier tier."], eligible: "Preferred, Premier", margin: "30%", example: "A Premier partner identifies an opportunity with a 1,000-user customer, performs demo, and closes deal without Recast sales involvement." },
+              { band: "Band 2 – Joint Engagement", criteria: ["Partner sources or registers opportunity.","Recast supports with presales, demo, or technical validation.","Partner co-sells with Recast sales team.","Must be Registered, Preferred, or Premier tier."], eligible: "Registered, Preferred, Premier", margin: "15%", example: "Partner brings opportunity but requests Recast SE to lead demo and pricing discussion." },
+              { band: "Band 3 – Transactional / Referral", criteria: ["Partner identifies or influences opportunity but Recast leads sale.","No significant partner engagement beyond intro or transaction.","Typically applies to LARs, transactional resellers, or referral agents.","Margin discretionary, subject to sales approval."], eligible: "Registered, LAR, Referral", margin: "5% (discretionary)", example: "Large LAR adds Recast SKU to customer renewal, minimal engagement." },
+            ],
+            governance: [
+              { element: "Eligibility Window", definition: "Deal registration valid for 6 months (renewable upon active pipeline evidence)." },
+              { element: "Tier Multiplier", definition: "Preferred partners may receive a +2% bonus on renewal deals; Premier may receive +5%." },
+              { element: "Renewal Margin", definition: "Renewal margin standardized at 10% unless expansion occurs (then revert to Band 2)." },
+              { element: "Band Review", definition: "Margin bands reviewed quarterly to align with GTM priorities." },
+              { element: "Escalation Path", definition: "Channel disputes escalated to Director, Channel Programs within 5 business days." },
+            ],
+            summary: [
+              { tier: "Premier", engagement: "Full-cycle (Band 1)", involvement: "Light-touch", range: "25–30%", notes: "Top-tier, full control of sales motion" },
+              { tier: "Preferred", engagement: "Joint sale (Band 2)", involvement: "Moderate", range: "10–15%", notes: "Co-sell and presales collaboration" },
+              { tier: "Registered / LAR", engagement: "Transactional (Band 3)", involvement: "High-touch / Recast-led", range: "0–5%", notes: "Finder’s fee or referral incentive" },
             ],
           },
         }
@@ -248,6 +276,13 @@
               render();
             });
           }
+          const roeButton = document.getElementById("roeButton");
+          if (roeButton) {
+            roeButton.addEventListener("click", () => {
+              STATE.showROE = !STATE.showROE;
+              render();
+            });
+          }
         }
         if (STATE.tab === "onboarding") {
           document.querySelectorAll("[data-step]").forEach((btn) => {
@@ -336,6 +371,10 @@
             <p class="mt-3 text-xs text-[#4A5568]">“Up to” indicates the maximum eligible margin given qualifiers & program standing.</p>
           `;
         }
+        let roeHtml = '';
+        if (STATE.showROE) {
+          roeHtml = renderROE();
+        }
         return `
           <div class="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-md">
             <div class="flex items-start justify-between flex-col sm:flex-row gap-4">
@@ -356,6 +395,57 @@
               </div>
             </div>
             <div class="mt-3">${contentHtml}</div>
+            <div class="mt-4">
+              <button id="roeButton" class="rounded-full bg-[#0070F3] px-4 py-2 text-sm text-white hover:bg-[#005AD0] focus:outline-none focus:ring-2 focus:ring-[#0070F3] focus:ring-offset-2">
+                ${STATE.showROE ? 'Hide' : 'Show'} Rules of Engagement
+              </button>
+            </div>
+          </div>
+          ${roeHtml}
+        `;
+      }
+      function renderROE() {
+        let principlesTable = '<table class="min-w-full divide-y divide-[#E2E8F0]"><thead><tr><th class="px-6 py-3 text-left text-sm font-semibold">Principle</th><th class="px-6 py-3 text-left text-sm font-semibold">Description</th><th class="px-6 py-3 text-left text-sm font-semibold">Intent</th></tr></thead><tbody class="divide-y divide-[#E2E8F0]">';
+        STATE.model.roe.principles.forEach((p) => {
+          principlesTable += `<tr><td class="px-6 py-4 text-sm font-medium">${p.principle}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${p.description}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${p.intent}</td></tr>`;
+        });
+        principlesTable += '</tbody></table>';
+        let bandsTable = '<table class="min-w-full divide-y divide-[#E2E8F0]"><thead><tr><th class="px-6 py-3 text-left text-sm font-semibold">Band</th><th class="px-6 py-3 text-left text-sm font-semibold">Qualification Criteria</th><th class="px-6 py-3 text-left text-sm font-semibold">Partner Type Eligible</th><th class="px-6 py-3 text-left text-sm font-semibold">Margin (up to)</th><th class="px-6 py-3 text-left text-sm font-semibold">Example Scenario</th></tr></thead><tbody class="divide-y divide-[#E2E8F0]">';
+        STATE.model.roe.bands.forEach((b) => {
+          let criteriaHtml = '<ul class="list-disc pl-5 space-y-1">';
+          b.criteria.forEach((c) => { criteriaHtml += `<li class="text-sm text-[#4A5568]">${c}</li>`; });
+          criteriaHtml += '</ul>';
+          bandsTable += `<tr><td class="px-6 py-4 text-sm font-medium">${b.band}</td><td class="px-6 py-4">${criteriaHtml}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${b.eligible}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${b.margin}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${b.example}</td></tr>`;
+        });
+        bandsTable += '</tbody></table>';
+        let governanceTable = '<table class="min-w-full divide-y divide-[#E2E8F0]"><thead><tr><th class="px-6 py-3 text-left text-sm font-semibold">Element</th><th class="px-6 py-3 text-left text-sm font-semibold">Definition</th></tr></thead><tbody class="divide-y divide-[#E2E8F0]">';
+        STATE.model.roe.governance.forEach((g) => {
+          governanceTable += `<tr><td class="px-6 py-4 text-sm font-medium">${g.element}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${g.definition}</td></tr>`;
+        });
+        governanceTable += '</tbody></table>';
+        let summaryTable = '<table class="min-w-full divide-y divide-[#E2E8F0]"><thead><tr><th class="px-6 py-3 text-left text-sm font-semibold">Partner Tier</th><th class="px-6 py-3 text-left text-sm font-semibold">Engagement Type</th><th class="px-6 py-3 text-left text-sm font-semibold">Typical Recast Involvement</th><th class="px-6 py-3 text-left text-sm font-semibold">Margin Range</th><th class="px-6 py-3 text-left text-sm font-semibold">Notes</th></tr></thead><tbody class="divide-y divide-[#E2E8F0]">';
+        STATE.model.roe.summary.forEach((s) => {
+          summaryTable += `<tr><td class="px-6 py-4 text-sm font-medium">${s.tier}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${s.engagement}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${s.involvement}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${s.range}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${s.notes}</td></tr>`;
+        });
+        summaryTable += '</tbody></table>';
+        return `
+          <div class="mt-4 space-y-8">
+            <div class="rounded-2xl border border-[#E2E8F0] bg-white shadow-md overflow-hidden">
+              <h3 class="text-lg font-semibold p-5 border-b border-[#E2E8F0]">Rules of Engagement (ROE)</h3>
+              <div class="overflow-x-auto">${principlesTable}</div>
+            </div>
+            <div class="rounded-2xl border border-[#E2E8F0] bg-white shadow-md overflow-hidden">
+              <h3 class="text-lg font-semibold p-5 border-b border-[#E2E8F0]">Margin Bands & Definitions</h3>
+              <div class="overflow-x-auto">${bandsTable}</div>
+            </div>
+            <div class="rounded-2xl border border-[#E2E8F0] bg-white shadow-md overflow-hidden">
+              <h3 class="text-lg font-semibold p-5 border-b border-[#E2E8F0]">Partner Margin Governance</h3>
+              <div class="overflow-x-auto">${governanceTable}</div>
+            </div>
+            <div class="rounded-2xl border border-[#E2E8F0] bg-white shadow-md overflow-hidden">
+              <h3 class="text-lg font-semibold p-5 border-b border-[#E2E8F0]">Example Summary Table</h3>
+              <div class="overflow-x-auto">${summaryTable}</div>
+            </div>
           </div>
         `;
       }
