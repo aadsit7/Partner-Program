@@ -168,23 +168,30 @@
               { tier: "Registered / LAR", engagement: "Transactional (Band 3)", involvement: "High-touch / Recast-led", range: "0–5%", notes: "Finder’s fee or referral incentive" },
             ],
           },
+          other: {
+            partners: [
+              { partnerType: "MSP", tierEligibility: "Premier", margin: "Negotiated within Band 1–3 framework", dealRegistration: "Required", mdfAccess: "Strategic MDF", enablement: "Dedicated Channel Manager, SE alignment, joint QBRs" },
+              { partnerType: "Technology Partner (ISV)", tierEligibility: "Premier", margin: "Negotiated; typically Band 2 equivalent + referral incentives", dealRegistration: "Optional", mdfAccess: "Co-marketing only", enablement: "Developer enablement, API/SDK certification" },
+              { partnerType: "OEM Partner", tierEligibility: "Premier", margin: "Embedded / co-sell pricing (not margin-based)", dealRegistration: "N/A", mdfAccess: "Strategic MDF", enablement: "OEM SDK, roadmap collaboration, joint solution blueprints" },
+              { partnerType: "Distributor Partner", tierEligibility: "Premier", margin: "Transactional (Band 3 equivalent, pre-negotiated)", dealRegistration: "Required", mdfAccess: "Tiered MDF by volume", enablement: "Distributor onboarding toolkit, partner training delivery" },
+            ]
+          }
         }
       };
-      const TIERS = ["Registered", "Preferred", "Premier"];
+      const TIERS = ["Registered", "Preferred", "Premier", "Other"];
       function render() {
         if (STATE.tier === "Registered") {
           STATE.newPartner = false;
         }
         let html = '<div class="space-y-6">';
-        html += '<section class="grid gap-3 sm:grid-cols-3">';
+        html += '<section class="grid gap-3 sm:grid-cols-4">';
         TIERS.forEach((t) => {
           const active = STATE.tier === t;
-          const subtitle =
-            t === "Registered"
-              ? "Access & referral economics"
-              : t === "Preferred"
-              ? "Pipeline tools, CRM access, joint motions"
-              : "Campaigns + priority support";
+          let subtitle = "";
+          if (t === "Registered") subtitle = "Access & referral economics";
+          if (t === "Preferred") subtitle = "Pipeline tools, CRM access, joint motions";
+          if (t === "Premier") subtitle = "Campaigns + priority support";
+          if (t === "Other") subtitle = "Specialized partner types";
           html += `
             <button
               class="${
@@ -205,40 +212,44 @@
           `;
         });
         html += "</section>";
-        html += '<nav role="tablist" aria-label="Sections" class="flex flex-wrap gap-2 rounded-full bg-white p-1 shadow-sm border border-[#E2E8F0]">';
-        const tabs = [
-          { id: "takes", label: "What it takes" },
-          { id: "gets", label: "What you get" },
-          { id: "margins", label: "Margins" },
-          { id: "onboarding", label: "Onboarding" },
-        ];
-        tabs.forEach((tabObj) => {
-          const active = STATE.tab === tabObj.id;
-          html += `
-            <button
-              role="tab"
-              aria-selected="${active}"
-              class="${
-                active ? "bg-[#0070F3] text-white" : "hover:bg-[#F7F9FB]"
-              } rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0070F3]"
-              data-tab="${tabObj.id}"
-            >
-              ${tabObj.label}
-            </button>
-          `;
-        });
-        html += "</nav>";
-        html += '<div class="grid gap-4" aria-live="polite">';
-        if (STATE.tab === "takes") {
-          html += renderWhatItTakes();
-        } else if (STATE.tab === "gets") {
-          html += renderWhatYouGet();
-        } else if (STATE.tab === "margins") {
-          html += renderMargins();
-        } else if (STATE.tab === "onboarding") {
-          html += renderOnboarding();
+        if (STATE.tier === "Other") {
+          html += renderOther();
+        } else {
+          html += '<nav role="tablist" aria-label="Sections" class="flex flex-wrap gap-2 rounded-full bg-white p-1 shadow-sm border border-[#E2E8F0]">';
+          const tabs = [
+            { id: "takes", label: "What it takes" },
+            { id: "gets", label: "What you get" },
+            { id: "margins", label: "Margins" },
+            { id: "onboarding", label: "Onboarding" },
+          ];
+          tabs.forEach((tabObj) => {
+            const active = STATE.tab === tabObj.id;
+            html += `
+              <button
+                role="tab"
+                aria-selected="${active}"
+                class="${
+                  active ? "bg-[#0070F3] text-white" : "hover:bg-[#F7F9FB]"
+                } rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0070F3]"
+                data-tab="${tabObj.id}"
+              >
+                ${tabObj.label}
+              </button>
+            `;
+          });
+          html += "</nav>";
+          html += '<div class="grid gap-4" aria-live="polite">';
+          if (STATE.tab === "takes") {
+            html += renderWhatItTakes();
+          } else if (STATE.tab === "gets") {
+            html += renderWhatYouGet();
+          } else if (STATE.tab === "margins") {
+            html += renderMargins();
+          } else if (STATE.tab === "onboarding") {
+            html += renderOnboarding();
+          }
+          html += "</div>";
         }
-        html += "</div>";
         html += '<footer class="pt-2 text-xs text-[#4A5568]">Preview purposes only. Program terms subject to agreement.</footer>';
         html += "</div>";
         document.getElementById("app").innerHTML = html;
@@ -248,13 +259,15 @@
             render();
           });
         });
-        document.querySelectorAll("[data-tab]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            STATE.tab = btn.dataset.tab;
-            render();
+        if (STATE.tier !== "Other") {
+          document.querySelectorAll("[data-tab]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              STATE.tab = btn.dataset.tab;
+              render();
+            });
           });
-        });
-        if (STATE.tab === "margins") {
+        }
+        if (STATE.tab === "margins" && STATE.tier !== "Other") {
           const commitmentSelect = document.getElementById("commitment");
           if (commitmentSelect) {
             commitmentSelect.addEventListener("change", (e) => {
@@ -284,7 +297,7 @@
             });
           }
         }
-        if (STATE.tab === "onboarding") {
+        if (STATE.tab === "onboarding" && STATE.tier !== "Other") {
           document.querySelectorAll("[data-step]").forEach((btn) => {
             btn.addEventListener("click", () => {
               STATE.activeStep = parseInt(btn.dataset.step);
@@ -482,6 +495,19 @@
               <div class="flex gap-2">${buttonsHtml}</div>
             </div>
             <ul class="mt-3 grid gap-2 sm:grid-cols-2">${listHtml}</ul>
+          </div>
+        `;
+      }
+      function renderOther() {
+        let otherTable = '<table class="min-w-full divide-y divide-[#E2E8F0]"><thead><tr><th class="px-6 py-3 text-left text-sm font-semibold">Partner Type</th><th class="px-6 py-3 text-left text-sm font-semibold">Tier Eligibility</th><th class="px-6 py-3 text-left text-sm font-semibold">Margin</th><th class="px-6 py-3 text-left text-sm font-semibold">Deal Registration</th><th class="px-6 py-3 text-left text-sm font-semibold">MDF Access</th><th class="px-6 py-3 text-left text-sm font-semibold">Enablement</th></tr></thead><tbody class="divide-y divide-[#E2E8F0]">';
+        STATE.model.other.partners.forEach((p) => {
+          otherTable += `<tr><td class="px-6 py-4 text-sm font-medium">${p.partnerType}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${p.tierEligibility}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${p.margin}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${p.dealRegistration}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${p.mdfAccess}</td><td class="px-6 py-4 text-sm text-[#4A5568]">${p.enablement}</td></tr>`;
+        });
+        otherTable += '</tbody></table>';
+        return `
+          <div class="mt-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-md overflow-hidden">
+            <h3 class="text-lg font-semibold p-5 border-b border-[#E2E8F0]">Other Partner Types</h3>
+            <div class="overflow-x-auto">${otherTable}</div>
           </div>
         `;
       }
